@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: bookgram-backend
+    env: docker
+    region: oregon
+    plan: free
+
+    branch: main
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: bookgram-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: bookgram-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: bookgram-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: bookgram-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: bookgram-db
+          property: password
+      - key: ALLOWED_ORIGINS
+        value: https://bookgram.vercel.app,http://localhost:5173,http://localhost:3000
+
+    autoDeploy: true
+
+databases:
+  - name: bookgram-db
+    databaseName: bookgram
+    plan: free
+    region: oregon

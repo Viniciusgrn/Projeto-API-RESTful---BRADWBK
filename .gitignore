@@ -1,0 +1,21 @@
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Docker override local
+docker-compose.override.yml
+
+# Arquivos compactados
+*.zip
+*.tar.gz
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.swp
+node_modules

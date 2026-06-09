@@ -1,0 +1,17 @@
+build
+.gradle
+Dockerfile
+*.md
+*.iml
+*.log
+test/
+src/test
+**/.git
+**/.idea
+**/.vscode
+**/node_modules
+**/tmp
+**/build
+**/.DS_Store
+**/Thumbs.db
+**/.env

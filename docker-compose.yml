@@ -1,0 +1,51 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: bookgram_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: bookgram
+      MYSQL_USER: bookgram_user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "bookgram_user", "-p1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookgram_backend
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookgram?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: bookgram_user
+      SPRING_DATASOURCE_PASSWORD: 1234
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3002,http://192.168.100.13:5173,http://192.168.100.13:3002,http://192.168.100.13:8086,http://bookforum.vgrn.cloud
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bookgram_frontend
+    restart: unless-stopped
+    ports:
+      - "3002:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
