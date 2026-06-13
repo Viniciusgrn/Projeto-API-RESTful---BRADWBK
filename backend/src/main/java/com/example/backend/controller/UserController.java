@@ -31,7 +31,7 @@ import com.example.backend.dto.UserDTO;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3002")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

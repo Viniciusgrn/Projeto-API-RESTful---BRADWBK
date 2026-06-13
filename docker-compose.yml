@@ -31,7 +31,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookgram?useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: bookgram_user
       SPRING_DATASOURCE_PASSWORD: 1234
-      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3002,http://192.168.100.13:5173,http://192.168.100.13:3002,http://192.168.100.13:8086,http://bookforum.vgrn.cloud
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3002,http://192.168.100.13:5173,http://192.168.100.13:3002,http://192.168.100.13:8086,https://bookforum.vgrn.cloud
     depends_on:
       db:
         condition: service_healthy

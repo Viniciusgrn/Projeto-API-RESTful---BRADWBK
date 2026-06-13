@@ -17,7 +17,7 @@ import com.example.backend.dto.RegisterBookDTO;
 import com.example.backend.model.RegisterBook;
 import com.example.backend.repository.RegisterBookRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3002")
 @RestController
 @RequestMapping("/api/register-books")
 public class RegisterBookController {

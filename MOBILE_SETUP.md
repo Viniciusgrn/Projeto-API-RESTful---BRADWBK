@@ -34,7 +34,7 @@ Anote o IP, ex: `192.168.1.100`
 No arquivo `docker-compose.yml`, na variável `ALLOWED_ORIGINS` do serviço `backend`, adicione o seu IP atual:
 
 ```yaml
-ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000,http://SEU_IP:5173,http://SEU_IP:3000
+ALLOWED_ORIGINS: http://localhost:3002,http://SEU_IP:3002
 ```
 
 ---
@@ -44,10 +44,10 @@ ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3000,http://SEU_IP:5173,
 Crie (ou edite) o arquivo `frontend/.env.local` apontando para o IP do seu computador:
 
 ```env
-VITE_API_URL=http://SEU_IP:8080
+VITE_API_URL=http://SEU_IP:8086
 ```
 
-> Troque `SEU_IP` pelo IP do passo 1, ex: `VITE_API_URL=http://192.168.1.100:8080`
+> Troque `SEU_IP` pelo IP do passo 1, ex: `VITE_API_URL=http://192.168.1.100:8086`
 
 ---
 
@@ -59,7 +59,7 @@ Na raiz do projeto:
 docker-compose up --build
 ```
 
-Verifique que o backend está rodando em `http://localhost:8080`.
+Verifique que o backend está rodando em `http://localhost:8086`.
 
 ---
 

@@ -232,7 +232,7 @@ async function saveBook() {
     }
 
     // Salva no backend
-    const { data } = await axios.post('http://localhost:8080/api/books', book)
+    const { data } = await axios.post('http://localhost:8086/api/books', book)
     message.value = `Book registered! ID: ${data.id}`
     alertType.value = 'success'
 

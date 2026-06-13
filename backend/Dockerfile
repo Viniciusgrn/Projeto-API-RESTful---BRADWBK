@@ -27,6 +27,6 @@ WORKDIR /app
 # Copia o JAR do stage de build
 COPY --from=build /app/build/libs/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8086
 
 CMD java -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE:-default} -jar app.jar

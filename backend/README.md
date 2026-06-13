@@ -41,15 +41,15 @@ Você deve ver três containers com status `running`:
 | Container         | Porta          |
 |-------------------|----------------|
 | bookgram_db       | 3306           |
-| bookgram_backend  | **8080**       |
-| bookgram_frontend | 3000           |
+| bookgram_backend  | **8086**       |
+| bookgram_frontend | 3002           |
 
 ### 4. Acesse a API
 
 A API estará disponível em:
 
 ```
-http://localhost:8080
+http://localhost:8086
 ```
 
 ---
@@ -83,16 +83,16 @@ docker compose down -v
 | `SPRING_DATASOURCE_URL`     | `jdbc:mysql://db:3306/bookgram?useSSL=false&serverTimezone=UTC` |
 | `SPRING_DATASOURCE_USERNAME`| `bookgram_user`                                       |
 | `SPRING_DATASOURCE_PASSWORD`| `1234`                                                |
-| `ALLOWED_ORIGINS`           | `http://localhost:5173`, `http://localhost:3000`       |
+| `ALLOWED_ORIGINS`           | `http://localhost:3002`, `http://localhost:5173`       |
 
 ---
 
 ## Problemas comuns
 
-**Porta 8080 já está em uso:**
+**Porta 8086 já está em uso:**
 ```bash
 # Verifique qual processo está usando a porta
-sudo lsof -i :8080
+sudo lsof -i :8086
 ```
 
 **Banco de dados demora para subir:**  

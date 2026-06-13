@@ -23,7 +23,7 @@ docker compose up --build
 O frontend ficará acessível em:
 
 ```
-http://localhost:3000
+http://localhost:3002
 ```
 
 ---
@@ -51,10 +51,10 @@ npm run dev
 O frontend ficará disponível em:
 
 ```
-http://localhost:5173
+http://localhost:3002
 ```
 
-> Certifique-se de que o backend está rodando em `http://localhost:8080`.
+> Certifique-se de que o backend está rodando em `http://localhost:8086`.
 
 ---
 
@@ -62,7 +62,7 @@ http://localhost:5173
 
 ### Criar uma conta
 
-1. Acesse `http://localhost:3000` (Docker) ou `http://localhost:5173` (dev local)
+1. Acesse `http://localhost:3002`
 2. Clique em **Registrar**
 3. Preencha nome, e-mail e senha
 4. Faça login com as credenciais criadas

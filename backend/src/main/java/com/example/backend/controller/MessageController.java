@@ -21,7 +21,7 @@ import com.example.backend.model.Notification;
 import com.example.backend.repository.MessageRepository;
 import com.example.backend.repository.NotificationRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3002")
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
