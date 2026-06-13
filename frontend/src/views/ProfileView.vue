@@ -240,7 +240,7 @@ async function handleComment({ postId, content }: { postId: number; content: str
 async function handleDelete(postId: number) {
   const uid = user.value?.id
   if (!uid) return
-  if (!confirm('Eliminar este post?')) return
+  if (!confirm('Excluir este post?')) return
   await deletePost(postId, uid)
   posts.value = posts.value.filter(p => p.id !== postId)
   showDialog.value = false

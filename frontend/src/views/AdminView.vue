@@ -333,13 +333,13 @@ async function openProgress(act: Activity) {
 }
 
 async function deleteAct(id: number) {
-  if (!confirm('Eliminar esta atividade e todas as atribuições?')) return
+  if (!confirm('Excluir esta atividade e todas as atribuições?')) return
   try {
     await adminDeleteActivity(myId, id)
     activities.value = activities.value.filter(a => a.id !== id)
-    toast('Eliminada')
+    toast('Excluída')
   } catch {
-    toast('Erro ao eliminar', 'error')
+    toast('Erro ao excluir', 'error')
   }
 }
 

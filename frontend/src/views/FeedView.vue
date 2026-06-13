@@ -30,7 +30,7 @@
     <div v-else-if="posts.length === 0" class="text-center py-16 px-4">
       <v-icon size="80" color="grey-lighten-2">mdi-book-open-variant</v-icon>
       <div class="text-h6 mt-4 text-medium-emphasis">Ainda não há posts</div>
-      <div class="text-body-2 text-medium-emphasis mb-4">Seja o primeiro a partilhar uma leitura!</div>
+      <div class="text-body-2 text-medium-emphasis mb-4">Seja o primeiro a compartilhar uma leitura!</div>
       <v-btn color="primary" rounded @click="$router.push('/create')">
         <v-icon start>mdi-plus</v-icon>Criar post
       </v-btn>

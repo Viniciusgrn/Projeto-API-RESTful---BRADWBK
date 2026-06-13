@@ -29,7 +29,7 @@
         </v-card>
 
         <div class="text-center mt-6 text-caption text-medium-emphasis">
-          Partilha. Descobre. Lê mais.
+          Compartilhe. Descubra. Leia mais.
         </div>
       </v-container>
 
