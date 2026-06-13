@@ -1,13 +1,8 @@
 package com.example.backend.controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -42,15 +37,6 @@ public class UserController {
 
     public UserController(UserRepository repo) {
         this.repo = repo;
-    }
-
-    // Pasta local onde os arquivos serão salvos (relativa ao diretório de execução)
-    private final Path uploadBase = Paths.get("uploads/avatars");
-
-    private void ensureUploadDir() throws IOException {
-        if (!Files.exists(uploadBase)) {
-            Files.createDirectories(uploadBase);
-        }
     }
 
     // Converte a entidade User em UserDTO (inclui a bio)
@@ -178,6 +164,8 @@ public class UserController {
 
     // ========================
     // Upload de avatar (multipart)
+    // A imagem é guardada no banco de dados (coluna avatar_data) para sobreviver
+    // a reinícios/rebuilds do container — o disco local não é persistido.
     // ========================
     @PostMapping("/{id}/avatar")
     public ResponseEntity<UserDTO> uploadAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
@@ -191,34 +179,38 @@ public class UserController {
         }
 
         try {
-            ensureUploadDir();
-
-            String original = file.getOriginalFilename();
-            String ext = "";
-            if (original != null && original.contains(".")) {
-                ext = original.substring(original.lastIndexOf('.'));
-            }
-            String filename = UUID.randomUUID().toString() + ext;
-            Path target = uploadBase.resolve(filename).normalize();
-
-            logger.info("Salvando avatar para usuário {} em {}", id, target.toAbsolutePath());
-
-            // grava o arquivo
-            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-
-            // atualiza usuário
             User user = userOpt.get();
-            String publicPath = "/uploads/avatars/" + filename; // caminho público para servir
-            user.setAvatarUrl(publicPath);
+            user.setAvatarData(file.getBytes());
+            String contentType = file.getContentType();
+            user.setAvatarContentType(contentType != null ? contentType : "image/jpeg");
+            // aponta para o endpoint que serve a imagem do banco; o sufixo ?v= quebra o cache do navegador
+            user.setAvatarUrl("/api/users/" + id + "/avatar?v=" + System.currentTimeMillis());
             User updated = repo.save(user);
 
-            logger.info("Imagem salva com sucesso: {} (usuario id={})", filename, id);
+            logger.info("Avatar salvo no banco com sucesso (usuario id={}, {} bytes)", id, file.getSize());
 
             return ResponseEntity.ok(toDTO(updated));
         } catch (IOException e) {
             logger.error("Erro ao salvar imagem para usuario {}: {}", id, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    // ========================
+    // Servir o avatar guardado no banco
+    // ========================
+    @GetMapping("/{id}/avatar")
+    public ResponseEntity<byte[]> getAvatar(@PathVariable Long id) {
+        Optional<User> userOpt = repo.findById(id);
+        if (userOpt.isEmpty() || userOpt.get().getAvatarData() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        User user = userOpt.get();
+        String contentType = user.getAvatarContentType() != null ? user.getAvatarContentType() : "image/jpeg";
+        return ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_TYPE, contentType)
+                .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "public, max-age=31536000, immutable")
+                .body(user.getAvatarData());
     }
 
     // ========================

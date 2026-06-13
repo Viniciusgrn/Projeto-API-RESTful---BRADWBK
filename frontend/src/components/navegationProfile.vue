@@ -106,13 +106,13 @@ const selected = ref('startPage')
 const noSelectItems = ['exit', 'registerBook', 'myBooks', 'Community', 'message', 'donation', 'profile']
 
 const items = [
-  { title: 'Home', value: 'startPage' },
+  { title: 'Início', value: 'startPage' },
   { title: 'Cadastro de Livros', value: 'registerBook' },
   { title: 'Meus Livros', value: 'myBooks' },
   { title: 'Comunidade', value: 'Community' },
-  { title: 'Message', value: 'message' },
+  { title: 'Mensagens', value: 'message' },
   { title: 'Doação', value: 'donation' },
-  { title: 'Profile', value: 'profile' },
+  { title: 'Perfil', value: 'profile' },
   { title: 'Sair', value: 'exit' },
 ]
 
