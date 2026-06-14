@@ -89,10 +89,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { createUser } from '@/services/apiRegisterUsers'
 import api from '@/services/api'
 
 const emit = defineEmits(['close'])
+const router = useRouter()
 
 const username = ref('')
 const email = ref('')
@@ -122,17 +124,28 @@ async function save() {
   loading.value = true
   try {
     const response = await createUser({ username: username.value, email: email.value, password: password.value })
-    // Upload avatar if selected
+    // Já guarda token + usuário (autentica as próximas chamadas, inclusive o upload da foto)
+    if (response?.token) localStorage.setItem('token', response.token)
+    localStorage.setItem('user', JSON.stringify(response))
+
+    // Upload avatar if selected (agora autenticado pelo token)
     if (photo.value && response?.id) {
       try {
         const form = new FormData()
         form.append('file', photo.value)
-        await api.post(`/users/${response.id}/avatar`, form)
+        const { data: updated } = await api.post(`/users/${response.id}/avatar`, form)
+        // atualiza o usuário salvo com a avatarUrl retornada
+        if (updated?.avatarUrl) {
+          const merged = { ...response, avatarUrl: updated.avatarUrl }
+          localStorage.setItem('user', JSON.stringify(merged))
+        }
       } catch (e) { console.warn('Avatar upload failed', e) }
     }
-    message.value = 'Conta criada! Você já pode fazer login.'
+
+    try { window.dispatchEvent(new CustomEvent('user-updated', { detail: response })) } catch (e) {}
+    message.value = 'Conta criada com sucesso!'
     alertType.value = 'success'
-    setTimeout(() => emit('close'), 1500)
+    setTimeout(() => router.push('/feed'), 800)
   } catch (error: any) {
     message.value = error.response?.data?.message || error.response?.data ||
       (error.response?.status === 409 ? 'Este email já está registrado.' : 'Erro ao criar conta.')

@@ -12,10 +12,9 @@ export async function addUser(user: { username: string; email: string; password:
   return data;
 }
 
-//Registro (mesmo endpoint de criação)
+//Registro via autenticação (cria conta e já devolve token JWT)
 export async function createUser(user: { username: string; email: string; password: string }) {
-  // usa o mesmo endpoint de criação de usuário
-  const { data } = await api.post("/users", user);
+  const { data } = await api.post("/auth/register", user);
   return data;
 }
 

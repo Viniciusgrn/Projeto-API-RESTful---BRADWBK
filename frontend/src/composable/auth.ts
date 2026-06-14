@@ -18,6 +18,19 @@ export function getLoggedUser() {
 }
 
 export function logout() {
+  // invalida o token no servidor (best-effort) antes de limpar a sessão local
+  try {
+    const token = localStorage.getItem('token')
+    if (token && token !== 'undefined' && token !== 'null') {
+      const base = import.meta.env.VITE_API_URL || '/api'
+      // fire-and-forget; não bloqueia o logout local
+      fetch(`${base}/auth/logout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        keepalive: true,
+      }).catch(() => {})
+    }
+  } catch {}
   localStorage.removeItem('token')
   localStorage.removeItem('user')
 }

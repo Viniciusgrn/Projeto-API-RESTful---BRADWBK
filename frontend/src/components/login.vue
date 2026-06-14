@@ -85,6 +85,8 @@ async function apply() {
   loading.value = true
   try {
     const res = await loginUser(email.value, password.value)
+    // Salva o token ANTES de qualquer chamada protegida (o interceptor usa ele)
+    if (res?.token) localStorage.setItem('token', res.token)
     // Fetch full user for latestdata
     try {
       const full = await getUserById(res.id)
