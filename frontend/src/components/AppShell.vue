@@ -9,9 +9,9 @@
         <v-btn icon @click="toggleTheme">
           <v-icon>{{ currentTheme === 'bookgramLight' ? 'mdi-weather-night' : 'mdi-white-balance-sunny' }}</v-icon>
         </v-btn>
-        <v-btn icon @click="$router.push('/message')">
-          <v-badge :content="unreadCount" :model-value="unreadCount > 0" color="error" floating>
-            <v-icon>mdi-chat-outline</v-icon>
+        <v-btn icon @click="$router.push('/notifications')">
+          <v-badge :content="notifCount" :model-value="notifCount > 0" color="error" floating>
+            <v-icon>mdi-bell-outline</v-icon>
           </v-badge>
         </v-btn>
         <v-btn v-if="isAdmin" icon @click="$router.push('/admin')" color="amber">
@@ -44,9 +44,9 @@
         <v-icon size="26">mdi-plus-box{{ activeTab === 'create' ? '' : '-outline' }}</v-icon>
       </v-btn>
 
-      <v-btn value="notifications" @click="$router.push('/notifications')">
-        <v-badge :content="notifCount" :model-value="notifCount > 0" color="error" floating>
-          <v-icon size="26">mdi-bell{{ activeTab === 'notifications' ? '' : '-outline' }}</v-icon>
+      <v-btn value="message" @click="$router.push('/message')">
+        <v-badge :content="unreadCount" :model-value="unreadCount > 0" color="error" floating>
+          <v-icon size="26">mdi-chat{{ activeTab === 'message' ? '' : '-outline' }}</v-icon>
         </v-badge>
       </v-btn>
 
@@ -81,7 +81,7 @@ const routeToTab: Record<string, string> = {
   '/feed': 'feed',
   '/explore': 'explore',
   '/create': 'create',
-  '/notifications': 'notifications',
+  '/message': 'message',
   '/profile': 'profile',
 }
 
