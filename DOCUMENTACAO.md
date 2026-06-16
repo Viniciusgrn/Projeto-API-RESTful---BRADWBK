@@ -244,19 +244,40 @@ Cada recurso tem seu cliente axios: `api.ts` (instância base), `apiRegisterUser
 
 ---
 
-## 9. Autenticação e papéis
+## 9. Autenticação e papéis (JWT)
 
-- **Login** (`POST /api/users/login`): valida e-mail + senha (BCrypt) e retorna o usuário.
-- O frontend guarda os dados do usuário no `localStorage` (`user`, `token`) e usa
-  `composable/auth.ts` (`getLoggedUser`, `logout`).
-- **Papéis**: `USER` (padrão) e `ADMIN`.
-  - O **superusuário** (`bruno-cardoso12@hotmail.com`) é promovido a `ADMIN`
-    automaticamente no login.
-  - Promoção de outros usuários: `POST /api/users/{id}/promote` (só o superusuário).
+A API usa **autenticação stateless com JSON Web Token (JWT, HS256)** e senha
+criptografada com **BCrypt**. Toda a API exige token, exceto as rotas públicas
+listadas abaixo.
 
-> ⚠️ A senha gerada do Spring Security que aparece no log (`Using generated security
-> password: ...`) **não é usada** — a autenticação é feita pela própria aplicação. O
-> Spring Security está configurado com `permitAll` em todas as rotas.
+### Rotas de autenticação (`/api/auth`)
+| Verbo | Path | Body | Retorno | Sucesso | Erro |
+|------|------|------|---------|---------|------|
+| POST | `/api/auth/register` | `{username, email, password}` | `{token, id, username, email, avatarUrl, role, bio}` | 201 | 400 / 409 |
+| POST | `/api/auth/login` | `{email, password}` | `{token, ...usuário}` | 200 | 401 / 404 |
+| POST | `/api/auth/logout` | — (header `Authorization: Bearer <token>`) | mensagem | 200 | — |
+
+### Como funciona
+- O **token** é gerado no `register`/`login` (`JwtService`, segredo em `JWT_SECRET`,
+  expiração em `JWT_EXPIRATION_MS`, padrão 24h) e carrega `subject` (e-mail),
+  `userId`, `username` e `role`.
+- O cliente envia o token em **todas** as requisições no header
+  `Authorization: Bearer <token>` (interceptor do Axios em `services/api.ts`).
+- O `JwtAuthFilter` valida o token e popula o `SecurityContext`. Token inválido/
+  expirado → **401** (o frontend desloga e volta ao login).
+- O **logout** invalida o token no servidor (`TokenBlacklist`), impedindo reuso até
+  a expiração.
+- O frontend guarda `user` e `token` no `localStorage` (`composable/auth.ts`).
+
+### Rotas públicas (sem token)
+`/api/auth/**`, `GET /api/users/*/avatar` (foto de perfil), `/uploads/**`,
+`/ws` (WebSocket) e as requisições `OPTIONS` (pré-flight CORS).
+
+### Papéis
+- `USER` (padrão) e `ADMIN`.
+- O **superusuário** (`bruno-cardoso12@hotmail.com`) é promovido a `ADMIN`
+  automaticamente no login.
+- Promoção de outros usuários: `POST /api/users/{id}/promote` (só o superusuário).
 
 ---
 
@@ -358,5 +379,8 @@ docker compose up -d --build
   disco) foram perdidas e precisam ser reenviadas uma vez.
 - Restam termos em **português de Portugal** em comentários do backend
   (`utilizador`/`superutilizador`) — não aparecem para o usuário.
-- A camada de segurança usa `permitAll`; a autorização real é feita na aplicação.
+- A API é protegida por **JWT** (ver seção 9). A `TokenBlacklist` do logout é em
+  memória: num cenário com **2+ instâncias** (balanceamento de carga), um logout só
+  vale na instância que o recebeu — para invalidação global seria preciso um store
+  compartilhado (ex.: Redis/banco).
   Para produção, recomenda-se reforçar autenticação/autorização (ex.: JWT).
