@@ -332,6 +332,23 @@ curl -i http://127.0.0.1:8086/api/users             # backend acessível pelo ho
 sudo nginx -T | grep -E "server_name|proxy_pass"    # proxy aponta p/ as portas certas?
 ```
 
+### Balanceamento de carga com NGINX (CR9)
+Há uma 2ª instância do backend opt-in para distribuir a carga via NGINX (round-robin):
+
+- `docker-compose.lb.yml` → adiciona `backend2` (porta **8087 → 8086**).
+- `nginx/bookforum-loadbalancer.conf` → bloco `upstream bookforum_backend` com as
+  duas instâncias (`127.0.0.1:8086` e `127.0.0.1:8087`); o `/api` passa a usar
+  `proxy_pass http://bookforum_backend`.
+- `nginx/README.md` → passo a passo de subida, aplicação no host e roteiro do teste
+  de desempenho **com e sem** balanceamento (CR10, via JMeter).
+
+```bash
+# subir com balanceamento (2 instâncias)
+docker compose -f docker-compose.yml -f docker-compose.lb.yml up -d --build
+# evidenciar o balanceamento (o header alterna entre :8086 e :8087)
+curl -s -o /dev/null -D - https://bookforum.vgrn.cloud/api/users | grep -i x-upstream
+```
+
 ---
 
 ## 12. Variáveis de ambiente
@@ -343,6 +360,8 @@ sudo nginx -T | grep -E "server_name|proxy_pass"    # proxy aponta p/ as portas 
 | `SPRING_DATASOURCE_USERNAME` | `bookgram_user` | backend |
 | `SPRING_DATASOURCE_PASSWORD` | `1234` | backend |
 | `ALLOWED_ORIGINS` | origens locais + `*.vercel.app` | backend (CORS) |
+| `JWT_SECRET` | segredo padrão (trocar em produção) | backend (assinatura do JWT) |
+| `JWT_EXPIRATION_MS` | `86400000` (24h) | backend (validade do token) |
 | `VITE_API_URL` | — | frontend (base da API) |
 
 > No `docker-compose.yml`, o backend aponta para o banco via `jdbc:mysql://db:3306/bookgram`
