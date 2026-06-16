@@ -1,0 +1,28 @@
+# ============================================================
+#  Balanceamento de carga (CR9) — 2ª instância do backend
+# ============================================================
+# Uso (sobe backend + backend2 atrás do NGINX com upstream):
+#   docker compose -f docker-compose.yml -f docker-compose.lb.yml up -d --build
+#
+# Para o teste SEM balanceamento (CR10), basta subir só o compose padrão:
+#   docker compose up -d
+#
+# Este arquivo é OPT-IN: só é usado quando passado com -f.
+# Não altera o docker-compose.yml padrão.
+services:
+  backend2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookgram_backend2
+    restart: unless-stopped
+    ports:
+      - "8087:8086"   # host 8087 -> container 8086 (app ouve na 8086)
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/bookgram?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: bookgram_user
+      SPRING_DATASOURCE_PASSWORD: 1234
+      ALLOWED_ORIGINS: http://localhost:5173,http://localhost:3002,http://192.168.100.13:5173,http://192.168.100.13:3002,http://192.168.100.13:8086,https://bookforum.vgrn.cloud
+    depends_on:
+      db:
+        condition: service_healthy
