@@ -1,0 +1,32 @@
+{
+  "info": {
+    "name": "BookForum - Books (CR4 / CR11)",
+    "description": "Create / List de livros.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://bookforum.vgrn.cloud" }
+  ],
+  "item": [
+    {
+      "name": "Create (POST /api/books) -> 200",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": { "raw": "{{baseUrl}}/api/books", "host": ["{{baseUrl}}"], "path": ["api","books"] },
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"1984\",\n  \"author\": \"George Orwell\",\n  \"description\": \"Distopia classica.\"\n}" }
+      }
+    },
+    {
+      "name": "List (GET /api/books) -> 200",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/books", "host": ["{{baseUrl}}"], "path": ["api","books"] }
+      }
+    }
+  ]
+}

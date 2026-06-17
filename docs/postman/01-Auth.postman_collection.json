@@ -1,0 +1,86 @@
+{
+  "info": {
+    "name": "BookForum - Auth (CR8 / CR11)",
+    "description": "Register / Login / Logout. Register e Login salvam {{token}} automaticamente (aba Tests).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://bookforum.vgrn.cloud" }
+  ],
+  "item": [
+    {
+      "name": "Register (POST /api/auth/register) -> 201",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 201', () => pm.response.to.have.status(201));",
+              "const b = pm.response.json();",
+              "if (b.token) { pm.environment.set('token', b.token); console.log('token salvo'); }",
+              "if (b.id)    { pm.environment.set('userId', b.id); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+        "body": { "mode": "raw", "raw": "{\n  \"username\": \"demo_user\",\n  \"email\": \"demo@bookforum.com\",\n  \"password\": \"Senha@123\"\n}" }
+      }
+    },
+    {
+      "name": "Login (POST /api/auth/login) -> 200",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status 200', () => pm.response.to.have.status(200));",
+              "const b = pm.response.json();",
+              "if (b.token) { pm.environment.set('token', b.token); console.log('token salvo'); }",
+              "if (b.id)    { pm.environment.set('userId', b.id); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"demo@bookforum.com\",\n  \"password\": \"Senha@123\"\n}" }
+      }
+    },
+    {
+      "name": "Logout (POST /api/auth/logout) -> 200",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/logout", "host": ["{{baseUrl}}"], "path": ["api","auth","logout"] }
+      }
+    },
+    {
+      "name": "PROVA: token invalidado -> 403",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('token revogado e rejeitado (403)', () => pm.response.to.have.status(403));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/api/books", "host": ["{{baseUrl}}"], "path": ["api","books"] },
+        "description": "Rode DEPOIS do Logout. Usa o MESMO {{token}} (agora na blacklist) numa rota PROTEGIDA -> 403 Forbidden. Antes do logout, este mesmo request daria 200."
+      }
+    }
+  ]
+}
