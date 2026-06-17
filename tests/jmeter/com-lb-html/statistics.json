@@ -1,0 +1,34 @@
+{
+  "GET /api/posts/feed" : {
+    "transaction" : "GET /api/posts/feed",
+    "sampleCount" : 4000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 598.8195000000007,
+    "medianResTime" : 114.0,
+    "minResTime" : 10.0,
+    "maxResTime" : 4985.0,
+    "pct1ResTime" : 1692.6000000000004,
+    "pct2ResTime" : 2161.95,
+    "pct3ResTime" : 3059.869999999997,
+    "throughput" : 237.54379713759724,
+    "receivedKBytesPerSec" : 486.91838885919594,
+    "sentKBytesPerSec" : 105.08529306965973
+  },
+  "Total" : {
+    "transaction" : "Total",
+    "sampleCount" : 4000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 598.8195000000007,
+    "medianResTime" : 114.0,
+    "minResTime" : 10.0,
+    "maxResTime" : 4985.0,
+    "pct1ResTime" : 1692.6000000000004,
+    "pct2ResTime" : 2161.95,
+    "pct3ResTime" : 3059.869999999997,
+    "throughput" : 237.54379713759724,
+    "receivedKBytesPerSec" : 486.91838885919594,
+    "sentKBytesPerSec" : 105.08529306965973
+  }
+}
