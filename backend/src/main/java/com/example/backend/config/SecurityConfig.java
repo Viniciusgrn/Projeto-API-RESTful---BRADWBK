@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.backend.security.JwtAuthFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 public class SecurityConfig {
 
@@ -39,6 +41,11 @@ public class SecurityConfig {
                 // demais rotas exigem token válido
                 .anyRequest().authenticated()
             )
+            // token ausente/inválido/revogado -> 401 (não autenticado),
+            // em vez do 403 padrão do Http403ForbiddenEntryPoint
+            .exceptionHandling(ex -> ex.authenticationEntryPoint(
+                (request, response, authException) ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
             .cors(cors -> {}); // usa o CorsConfig
         return http.build();
